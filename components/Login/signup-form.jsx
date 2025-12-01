@@ -11,22 +11,28 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export function SignupForm({ className, ...props }) {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
 
     try {
+      // Create user in MongoDB via your API
       const res = await fetch("/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -34,18 +40,26 @@ export function SignupForm({ className, ...props }) {
       });
 
       const data = await res.json();
-      console.log("Signup Response:", data);
 
       if (data.success) {
-        alert("Account created successfully!");
-        // Redirect to login page
-        window.location.href = "/login";
+        // Auto-login using NextAuth Credentials
+        const loginRes = await signIn("credentials", {
+          redirect: false,
+          email,
+          password,
+        });
+
+        if (!loginRes.error) {
+          router.push("/home"); // Redirect to home
+        } else {
+          router.push("/login"); // Fallback
+        }
       } else {
-        alert(data.error || "Signup failed");
+        setError(data.error || "Signup failed");
       }
-    } catch (error) {
-      console.error("Signup error:", error);
-      alert("Server error. Please try again.");
+    } catch (err) {
+      console.error("Signup error:", err);
+      setError("Server error. Please try again.");
     }
   };
 
@@ -86,8 +100,7 @@ export function SignupForm({ className, ...props }) {
             onChange={(e) => setEmail(e.target.value)}
           />
           <FieldDescription>
-            We&apos;ll use this to contact you. We will not share your email
-            with anyone else.
+            We&apos;ll use this to contact you. We will not share your email with anyone else.
           </FieldDescription>
         </Field>
 
@@ -114,6 +127,8 @@ export function SignupForm({ className, ...props }) {
           />
           <FieldDescription>Please confirm your password.</FieldDescription>
         </Field>
+
+        {error && <p className="text-red-500 text-center">{error}</p>}
 
         <Field>
           <Button type="submit" className="bg-[#feb707] hover:bg-[#f2ac04]">

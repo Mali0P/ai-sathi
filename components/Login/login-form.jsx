@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,33 +12,28 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { signIn } from "next-auth/react"; // ✅ import signIn
 
 export function LoginForm({ className, ...props }) {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+    // Use NextAuth signIn with credentials
+    const res = await signIn("credentials", {
+      redirect: false, // we handle redirect manually
+      email,
+      password,
+    });
 
-      const data = await res.json();
-      console.log("Login Response:", data);
-
-      if (data.success) {
-        alert("Login successful!");
-        // Redirect if needed: window.location.href = "/dashboard";
-      } else {
-        alert(data.error || "Login failed");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      alert("Server error. Please try again.");
+    if (res.error) {
+      setError(res.error);
+    } else {
+      router.push("/home"); // redirect on successful login
     }
   };
 
@@ -77,6 +73,8 @@ export function LoginForm({ className, ...props }) {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Field>
+
+        {error && <p className="text-red-500 text-center">{error}</p>}
 
         <Field>
           <Button

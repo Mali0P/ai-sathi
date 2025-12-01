@@ -1,21 +1,26 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import Providers from "@/components/Providers";
 
 const wolfFont = localFont({
-  src: "./fonts/KFIAZD4RUMEZIYV6FQ3T3GP5PDBDB6JY.woff2", // relative path inside project
+  src: "./fonts/KFIAZD4RUMEZIYV6FQ3T3GP5PDBDB6JY.woff2",
   variable: "--font-wolf",
   display: "swap",
 });
 
 export const metadata = {
   title: "AI Sathi",
-  description: "An AI companion to assist you in various tasks.",
+  description: "Your AI companion",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children, router }) {
   return (
     <html lang="en" className={wolfFont.variable}>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+  <Providers>
+          {children}
+        </Providers>
+      </body>
     </html>
   );
 }
