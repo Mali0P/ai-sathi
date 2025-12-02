@@ -1,4 +1,4 @@
-// app/utils/voiceCommands.js
+//utils/voiceCommands.js
 
 export const startVoiceRecognition = (onKnownCommand, onUnknownCommand) => {
   const SpeechRecognition =

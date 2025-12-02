@@ -5,7 +5,11 @@ import { ArrowUpIcon, MicIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import gsap from "gsap";
 import useChatStore from "@/store/useChatStore";
-import { startVoiceRecognition } from "@/app/utils/voiceCommands";
+import { startVoiceRecognition } from "@/utils/voiceCommands";
+import exportChat from "@/utils/exportChat";
+import { Download } from "lucide-react";
+
+
 
 const InputField = () => {
   const { input, setInput, addMessage, messages, isLoading } = useChatStore();
@@ -67,14 +71,14 @@ const InputField = () => {
       addMessage();
     }
   }}
-  className="w-full h-full rounded-[100px] shadow-[0px_3px_8px_rgba(0,0,0,0.24)] text-[1.2vw] px-[3vw] text-white bg-white/30 backdrop-blur-md outline-none border-none"
+  className="w-full h-full rounded-[100px] shadow-[0px_3px_8px_rgba(0,0,0,0.24)] text-[1.2vw] px-[4vw] text-white bg-white/30 backdrop-blur-md outline-none border-none"
   placeholder="Type your message..."
   disabled={isLoading}
 />
 
 
       {/* Voice Button */}
-      <div className="absolute right-[6vw]">
+      <div className="absolute left-[1.5vw]">
         <Button
           onClick={handleVoice}
           size="icon"
@@ -88,16 +92,30 @@ const InputField = () => {
       </div>
 
       {/* Send Button */}
-      <div className="absolute right-[2vw]">
+      <div className="absolute right-[4vw]">
         <Button
           onClick={handleClick}
           size="icon"
-          className="rounded-full w-[60px] h-[60px] hover:bg-white hover:text-[#fa5d0d] text-white bg-transparent border-none"
+          className="rounded-full w-[60px] h-[60px] hover:bg-transparent hover:text-[#fa5d0d] text-white bg-transparent border-none"
           disabled={isLoading}
         >
           <ArrowUpIcon />
         </Button>
+
+
       </div>
+      <div className="absolute right-[2vw]">
+             <Button
+  onClick={exportChat}
+  size="icon"
+  className="rounded-full w-[60px] h-[60px] hover:bg-transparent hover:text-[#fa5d0d] text-white bg-transparent border-none right-[10px]"
+>
+  <Download className="w-6 h-6" />
+</Button>
+
+
+      </div>
+
     </div>
   );
 };

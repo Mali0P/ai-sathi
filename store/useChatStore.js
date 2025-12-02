@@ -7,6 +7,11 @@ const useChatStore = create((set, get) => ({
   messages: [],
   chatId: uuidv4(),
   isLoading: false,
+  autoVoice: false,
+  lastReadId: null, // NEW: track last read message
+
+  setAutoVoice: (value) => set({ autoVoice: value }),
+  setLastReadId: (id) => set({ lastReadId: id }),
 
   setInput: (newInput) => set({ input: newInput }),
 
